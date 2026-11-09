@@ -75,7 +75,7 @@ export function StackExplorer({ layers, title, intro }: Props) {
           {intro}
         </p>
         <button type="button" className="btn" onClick={trace} aria-disabled={tracing || undefined}>
-          <RollLabel label="Trace a payment" bars />
+          <RollLabel label="Trace a payment" arrow />
         </button>
         <ol
           className="trace-log mt-7 grid gap-2 text-[15px] text-on-dark-muted wide:min-h-[180px]"

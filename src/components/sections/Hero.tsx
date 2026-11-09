@@ -28,11 +28,11 @@ export function Hero() {
           </h1>
           <p className="hero-lede">
             I build <strong>software people trust with their money</strong>, from the interfaces they use to the systems
-            powering them. Nine years in, based in Kigali.
+            powering them. Ten years in, based in Kigali.
           </p>
           <div className="hero-actions">
             <a className="btn" href="#contact">
-              <RollLabel label="Start a conversation" bars />
+              <RollLabel label="Start a conversation" arrow />
             </a>
             <a className="btn btn-ghost" href="#work">
               <RollLabel label="See selected work" />

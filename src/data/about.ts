@@ -1,5 +1,5 @@
 export const aboutStatement =
-  "For nine years I’ve built software for people who need it to just work. I spent most of them leading frontend teams for clients across Europe and Africa. Today I build financial and enterprise systems in Kigali, from the screen down to the database.";
+  "For ten years I’ve built software for people who need it to just work. I spent most of them leading frontend teams for clients across Europe and Africa. Today I build financial and enterprise systems in Kigali, from the screen down to the database.";
 
 /** Words (lowercased, letters only) tinted in the accent colour once revealed. */
 export const aboutHighlights = ["work", "financial", "enterprise", "database"];

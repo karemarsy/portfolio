@@ -187,22 +187,12 @@
   .btn:focus-visible .roll span {
     transform: translateY(-100%);
   }
-  .btn .bars {
-    display: grid;
-    gap: 3px;
-    width: 14px;
-  }
-  .btn .bars i {
-    display: block;
-    height: 2px;
-    background: currentColor;
-    border-radius: 2px;
+  .btn .arrow {
+    flex: none;
     transition: transform 0.45s var(--ease);
   }
-  .btn:hover .bars i:nth-child(1) {
-    transform: translateX(-3px);
-  }
-  .btn:hover .bars i:nth-child(3) {
+  .btn:hover .arrow,
+  .btn:focus-visible .arrow {
     transform: translateX(3px);
   }
   .btn-ghost {
@@ -589,8 +579,8 @@
 
   /* ---------- About: word-by-word reveal ---------- */
   .statement .w {
-    /* 0.4 keeps unrevealed words at ≥3:1 contrast for large text. */
-    opacity: 0.4;
+    /* 0.5 keeps unrevealed words comfortably above 3:1 contrast for large text. */
+    opacity: 0.5;
     transition: opacity 0.35s;
   }
   .statement .w.on {
