@@ -76,7 +76,7 @@ export function ProjectMeta({ project, index, featured = false }: { project: Pro
       <Tags items={project.tags} />
       {project.link && (
         <a
-          className="case-link mt-5 inline-flex items-center gap-2 border-b-[1.5px] border-current pb-0.5 text-[15px] font-semibold text-ink no-underline"
+          className="case-link relative mt-5 inline-flex items-center gap-2 border-b-[1.5px] border-current pb-0.5 after:absolute after:inset-x-0 after:-inset-y-2.5 after:content-[''] text-[15px] font-semibold text-ink no-underline"
           href={project.link.href}
           target="_blank"
           rel="noopener noreferrer"

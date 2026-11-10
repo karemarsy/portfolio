@@ -4,7 +4,7 @@ import { LocalTime } from "@/components/ui/LocalTime";
 import { site } from "@/data/site";
 
 const metaLabel = "mb-1.5 font-body text-sm leading-[1.3] font-semibold tracking-normal opacity-85";
-const metaValue = "text-xl font-medium no-underline hover:underline hover:underline-offset-4";
+const metaValue = "inline-flex min-h-11 items-center text-xl font-medium no-underline hover:underline hover:underline-offset-4";
 
 export function Contact() {
   return (

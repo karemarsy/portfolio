@@ -57,7 +57,7 @@ export function Navbar() {
     <>
       <header className={cn("nav", hidden && !menuOpen && "is-hidden", onAccent && "on-accent")}>
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-6 px-[var(--gutter)] py-[22px]">
-          <a className="brand" href="#top" aria-label={`${site.shortName}, back to top`}>
+          <a className="brand inline-flex min-h-11 items-center" href="#top" aria-label={`${site.shortName}, back to top`}>
             {site.shortName}
           </a>
           <nav aria-label="Main" className="hidden wide:block">
