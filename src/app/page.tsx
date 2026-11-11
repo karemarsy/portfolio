@@ -1,3 +1,4 @@
+import { MotionEffects } from "@/components/effects/MotionEffects";
 import { Navbar } from "@/components/layout/Navbar";
 import { About } from "@/components/sections/About";
 import { Contact } from "@/components/sections/Contact";
@@ -27,6 +28,7 @@ export default function Home() {
         Skip to selected work
       </a>
       <Navbar />
+      <MotionEffects />
       <main>
         <Hero />
         <SelectedWork />

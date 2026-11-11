@@ -5,11 +5,8 @@ export type ProjectImage = {
   height: number;
 };
 
-/** Grid placement within a work group; mirrors the staggered editorial layout. */
-/** Background colour of the frame around the screenshot. */
+/** Colour of the project's card in the deck. */
 export type ProjectTone = "basalt" | "hill" | "accent" | "slate" | "mist";
-
-export type ProjectLayout = "feature" | "i1" | "i2" | "i3" | "o1" | "o2" | "o3";
 
 export type Project = {
   slug: string;
@@ -18,7 +15,6 @@ export type Project = {
   badge: string;
   description: string;
   tags: string[];
-  layout: ProjectLayout;
   tone: ProjectTone;
   image?: ProjectImage;
   /** Second screenshot that cross-fades in on hover. */
@@ -48,7 +44,6 @@ export const workGroups: WorkGroup[] = [
         description:
           "ADFinance is a fintech building core banking, digital channels and regulator-ready reporting for institutions across East and West Africa. I build and maintain enterprise applications across its products, working with product managers, designers and QA throughout the development cycle.",
         tags: ["React", "Next.js", "NestJS", "Prisma", "PostgreSQL", "Keycloak", "Docker", "AWS"],
-        layout: "feature",
         tone: "basalt",
         image: {
           src: "/images/work/adfinance.png",
@@ -72,7 +67,6 @@ export const workGroups: WorkGroup[] = [
         description:
           "A private money app that tells you what you can spend today until payday, checks whether you can afford something, and tracks your savings goals. A rule-based coach answers questions about your spending and understands Kinyarwanda words. Everything stays on the phone.",
         tags: ["React", "Next.js", "Tailwind CSS"],
-        layout: "i1",
         tone: "hill",
         image: {
           src: "/images/work/personal-finance-assistant.webp",
@@ -95,7 +89,6 @@ export const workGroups: WorkGroup[] = [
         description:
           "A website for Jukar, a family-led initiative in Rwanda that helps children from families facing hardship, and children who have lost their parents, go to school and keep learning. It shares the mission, the work and the stories behind it, and gives supporters a clear way to help.",
         tags: ["React", "Next.js", "Tailwind CSS"],
-        layout: "i2",
         tone: "accent",
         image: {
           src: "/images/work/jukar.webp",
@@ -112,7 +105,6 @@ export const workGroups: WorkGroup[] = [
         description:
           "An online shop for supplements and skincare, built as a personal project. Each product has its own showcase with details and a price in Rwandan francs, and shoppers can browse by category and add items to their bag as they go.",
         tags: ["React", "Next.js", "Tailwind CSS"],
-        layout: "i3",
         tone: "slate",
         image: {
           src: "/images/work/glowell.webp",
@@ -135,7 +127,6 @@ export const workGroups: WorkGroup[] = [
         description:
           "An interactive peer-to-peer learning platform, with responsive interfaces and a modern frontend architecture. Dacade is now a read-only archive.",
         tags: ["React", "Next.js"],
-        layout: "o1",
         tone: "mist",
         image: {
           src: "/images/work/dacade.webp",
@@ -152,7 +143,6 @@ export const workGroups: WorkGroup[] = [
         description:
           "Reworked the frontend architecture to cut page load times and make the site more responsive.",
         tags: ["Frontend performance"],
-        layout: "o2",
         tone: "basalt",
         image: {
           src: "/images/work/rock-tech-lithium.webp",
@@ -169,7 +159,6 @@ export const workGroups: WorkGroup[] = [
         description:
           "Built and maintained the Shopify store for this fair trade design brand, with custom integrations and performance work. Folkdays now sells through White Label Project’s store.",
         tags: ["Shopify", "Custom integrations"],
-        layout: "o3",
         tone: "accent",
         image: {
           src: "/images/work/folkdays.webp",

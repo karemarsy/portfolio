@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import type { StackLayer } from "@/data/skills";
 import { traceFinalStep } from "@/data/skills";
 import { cn } from "@/lib/utils";
@@ -19,6 +19,7 @@ export function StackExplorer({ layers, title, intro }: Props) {
   const [log, setLog] = useState<string[]>([]);
   const [tracing, setTracing] = useState(false);
   const [tracerY, setTracerY] = useState<number | null>(null);
+  const [hoverLayer, setHoverLayer] = useState<number | null>(null);
   const bandRefs = useRef<Array<HTMLDivElement | null>>([]);
   const timers = useRef<Array<ReturnType<typeof setTimeout>>>([]);
 
@@ -74,7 +75,20 @@ export function StackExplorer({ layers, title, intro }: Props) {
         <p className="mb-[30px] max-w-[36ch] text-on-dark-muted">
           {intro}
         </p>
-        <button type="button" className="btn" onClick={trace} aria-disabled={tracing || undefined}>
+        <div className="plates" aria-hidden="true">
+          <div className="plates-stack">
+            {layers.map((layer, i) => (
+              <div
+                key={layer.name}
+                className={cn("plate", hoverLayer === i && "is-hover", activeLayer === i && "is-active")}
+                style={{ "--i": layers.length - 1 - i } as CSSProperties}
+              >
+                {layer.name}
+              </div>
+            ))}
+          </div>
+        </div>
+        <button type="button" className="btn" onClick={trace} aria-disabled={tracing || undefined} data-magnetic>
           <RollLabel label="Trace a payment" arrow />
         </button>
         <ol
@@ -107,6 +121,10 @@ export function StackExplorer({ layers, title, intro }: Props) {
                 bandRefs.current[i] = el;
               }}
               className={cn("band", isOpen && "is-open", activeLayer === i && "is-active")}
+              onPointerEnter={() => setHoverLayer(i)}
+              onPointerLeave={() => setHoverLayer(null)}
+              onFocus={() => setHoverLayer(i)}
+              onBlur={() => setHoverLayer(null)}
             >
               <button
                 type="button"

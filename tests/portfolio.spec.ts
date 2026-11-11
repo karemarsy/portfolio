@@ -68,7 +68,10 @@ test("mobile menu opens, traps focus, closes with Escape and on link choice", as
   await menu.click();
   await page.getByRole("dialog", { name: "Menu" }).getByRole("link", { name: "Stack" }).click();
   await expect(menu).toHaveAttribute("aria-expanded", "false");
-  await expect.poll(() => page.locator("#stack").evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBeLessThan(5);
+  // Smooth scrolling covers most of the page; allow for slow, busy machines.
+  await expect
+    .poll(() => page.locator("#stack").evaluate((el) => Math.round(el.getBoundingClientRect().top)), { timeout: 10_000 })
+    .toBeLessThan(5);
 });
 
 test("experience entries expand and collapse", async ({ page }) => {
@@ -112,4 +115,66 @@ test("reduced motion shows the About statement fully", async ({ page }) => {
   await page.reload();
   const words = page.locator("#about .statement .w");
   await expect(page.locator("#about .statement .w.on")).toHaveCount(await words.count());
+});
+
+test("stack plates light up in trace order", async ({ page }) => {
+  // Normal step speed (780ms): with the reduced-motion speed, a busy machine can merge steps into one render.
+  await expect(page.locator(".plate")).toHaveCount(7);
+  // Record which plate is lit each time the classes change, then run the trace.
+  await page.evaluate(() => {
+    const plates = Array.from(document.querySelectorAll(".plate"));
+    const seen: number[] = [];
+    (window as unknown as { __lit: number[] }).__lit = seen;
+    new MutationObserver(() => {
+      const lit = plates.findIndex((p) => p.classList.contains("is-active"));
+      if (lit !== -1 && seen[seen.length - 1] !== lit) seen.push(lit);
+    }).observe(document.querySelector(".plates-stack")!, { subtree: true, attributes: true, attributeFilter: ["class"] });
+  });
+  await page.getByRole("button", { name: "Trace a payment" }).click();
+  const lit = () => page.evaluate(() => (window as unknown as { __lit: number[] }).__lit);
+  await expect.poll(lit, { timeout: 12_000 }).toEqual(expect.arrayContaining([6]));
+  await expect.poll(async () => (await lit()).at(-1), { timeout: 3000 }).toBe(0);
+  // Down the stack from Interfaces to Delivery, then back to the interface.
+  const order = (await lit()).slice(0, -1);
+  expect(order[0]).toBe(0);
+  expect(order.every((v, i) => i === 0 || v > order[i - 1])).toBe(true);
+});
+
+test("experience rail fills as the list scrolls into view", async ({ page, isMobile }) => {
+  test.skip(isMobile, "The rail is shown on wide screens only");
+  const list = page.locator("ol.timeline");
+  await list.scrollIntoViewIfNeeded();
+  await page.mouse.wheel(0, 400);
+  await expect
+    .poll(async () => Number(await list.evaluate((el) => getComputedStyle(el).getPropertyValue("--progress"))))
+    .toBeGreaterThan(0);
+  await expect(list.locator("> li[data-reached]").first()).toBeAttached();
+});
+
+test("decorative layers stay out of the accessibility tree and still under reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.reload();
+  await expect(page.locator(".plates")).toHaveAttribute("aria-hidden", "true");
+  const frame = page.locator("#work .case-frame").first();
+  await expect(frame).toHaveCSS("opacity", "1");
+  await expect(frame).toHaveCSS("rotate", "none");
+});
+
+test("project deck lists every project with its number", async ({ page }) => {
+  const deck = page.getByRole("list", { name: "Projects" });
+  const cards = deck.getByRole("article");
+  await expect(cards).toHaveCount(7);
+  await expect(cards.first().getByRole("heading", { level: 3 })).toHaveText("ADFinance");
+  await expect(cards.last().getByLabel("Project 7 of 7")).toBeVisible();
+});
+
+test("pinned deck cards recede as the next card covers them", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Cards pin on wide screens only");
+  const deck = page.getByRole("list", { name: "Projects" });
+  await deck.scrollIntoViewIfNeeded();
+  const second = page.locator(".deck-item").nth(1);
+  await second.evaluate((el) => window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 92));
+  await expect
+    .poll(() => page.locator(".deck-card").first().evaluate((el) => Number(el.style.getPropertyValue("--recede") || 0)))
+    .toBeGreaterThan(0.8);
 });

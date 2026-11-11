@@ -9,7 +9,7 @@ const metaValue = "inline-flex min-h-11 items-center text-xl font-medium no-unde
 export function Contact() {
   return (
     <section
-      className="bg-accent pt-[clamp(100px,13vw,190px)] pb-10 text-basalt"
+      className="sheet bg-accent pt-[clamp(100px,13vw,190px)] pb-10 text-basalt"
       id="contact"
       aria-labelledby="contact-title"
     >
@@ -22,7 +22,7 @@ export function Contact() {
           the details. Email is the quickest way to reach me.
         </p>
         <div className="flex flex-wrap items-center gap-x-[26px] gap-y-[18px] border-y-[1.5px] border-basalt py-[30px]">
-          <a className="email-link" href={`mailto:${site.email}`}>
+          <a className="email-link" href={`mailto:${site.email}`} data-magnetic>
             {site.email}
           </a>
           <CopyEmailButton email={site.email} />

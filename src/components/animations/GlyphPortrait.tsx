@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-
-/** Character ramp from darkest to brightest. */
-const RAMP = [".", ":", "-", "=", "+", "<", ">", "/", "{", "}", "0", "1", "#", "@"] as const;
+import { buildGlyphSheet, RAMP } from "@/lib/glyphs";
 
 const COLORS = {
   accent: "242,153,74",
@@ -17,6 +15,8 @@ type Tint = keyof typeof COLORS;
 const MOUSE_REPEL = true;
 /** Characters drift apart as the hero scrolls away. */
 const SCROLL_SCATTER = true;
+/** Glyphs crossing the first name line are dimmed so the name stays readable. */
+const NAME_DIM = 0.4;
 
 const ALPHA_STEPS = 20;
 const PARTICLE_STYLE: Record<"cream" | "white", string[]> = {
@@ -86,6 +86,8 @@ export function GlyphPortrait({ src, label }: Props) {
     let disposed = false;
     let idleHandle: number | undefined;
     let idleFallback: ReturnType<typeof setTimeout> | undefined;
+    // Area of the first name line, where crossing glyphs are dimmed.
+    let nameRect = { left: 0, top: 0, right: 0, bottom: 0 };
 
     const img = new Image();
     img.decoding = "async";
@@ -93,21 +95,9 @@ export function GlyphPortrait({ src, label }: Props) {
     function buildAtlas(dpr: number) {
       atlasDpr = dpr;
       atlas = {};
-      const gw = Math.ceil(cellW * dpr);
-      const gh = Math.ceil(cellH * dpr);
       (Object.keys(COLORS) as Tint[]).forEach((tint) => {
-        const sheet = document.createElement("canvas");
-        sheet.width = gw * RAMP.length;
-        sheet.height = gh;
-        const sctx = sheet.getContext("2d");
-        if (!sctx) return;
-        sctx.scale(dpr, dpr);
-        sctx.font = `600 ${cellH}px ui-monospace, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace`;
-        sctx.textBaseline = "top";
-        sctx.textAlign = "center";
-        sctx.fillStyle = `rgb(${COLORS[tint]})`;
-        RAMP.forEach((glyph, i) => sctx.fillText(glyph, (i * gw) / dpr + cellW / 2, 0));
-        atlas[tint] = sheet;
+        const sheet = buildGlyphSheet(COLORS[tint], cellW, cellH, dpr);
+        if (sheet) atlas[tint] = sheet;
       });
     }
 
@@ -144,10 +134,17 @@ export function GlyphPortrait({ src, label }: Props) {
         boxW = width * 0.52;
         boxH = boxW / aspect;
       }
-      const boxX = mobile ? (width - boxW) / 2 : width * 0.71 - boxW / 2;
+      const boxX = mobile ? (width - boxW) / 2 : width * 0.68 - boxW / 2;
       const boxY = height - boxH;
       const centreX = boxX + boxW / 2;
       const centreY = boxY + boxH * 0.35;
+      const heroTop = hero.getBoundingClientRect().top;
+      const heroLeft = hero.getBoundingClientRect().left;
+      const firstLine = hero.querySelector<HTMLElement>(".name-line");
+      if (firstLine) {
+        const r = firstLine.getBoundingClientRect();
+        nameRect = { left: r.left - heroLeft, top: r.top - heroTop, right: r.right - heroLeft, bottom: r.bottom - heroTop };
+      }
 
       const cols = Math.max(1, Math.floor(boxW / cellW));
       const rows = Math.max(1, Math.floor(boxH / cellH));
@@ -284,7 +281,11 @@ export function GlyphPortrait({ src, label }: Props) {
         }
 
         const intro = still ? 1 : Math.min(1, (elapsed - c.delay) / 500);
-        const a = (0.06 + 0.94 * Math.pow(c.b, 0.8)) * (1 + c.flicker * 0.7 + boost * 0.9) * intro * fade;
+        const x = c.x + c.ox;
+        const y = c.y + c.oy;
+        const overName = x > nameRect.left && x < nameRect.right && y > nameRect.top && y < nameRect.bottom;
+        const a =
+          (0.06 + 0.94 * Math.pow(c.b, 0.8)) * (1 + c.flicker * 0.7 + boost * 0.9) * intro * fade * (overName ? NAME_DIM : 1);
         let tint: Tint = c.tint;
         if (c.flicker > 0.85 && c.b > 0.55 && Math.random() < 0.25) {
           tint = "white";
@@ -294,7 +295,7 @@ export function GlyphPortrait({ src, label }: Props) {
         const sheet = atlas[tint];
         if (!sheet) continue;
         ctx.globalAlpha = Math.min(1, a);
-        ctx.drawImage(sheet, g * gw, 0, gw, gh, c.x + c.ox, c.y + c.oy, gw / atlasDpr, gh / atlasDpr);
+        ctx.drawImage(sheet, g * gw, 0, gw, gh, x, y, gw / atlasDpr, gh / atlasDpr);
       }
       ctx.globalAlpha = 1;
     }
@@ -412,5 +413,5 @@ export function GlyphPortrait({ src, label }: Props) {
     };
   }, [src]);
 
-  return <canvas ref={canvasRef} className="absolute inset-0 block h-full w-full" role="img" aria-label={label} />;
+  return <canvas ref={canvasRef} className="hero-canvas" role="img" aria-label={label} />;
 }

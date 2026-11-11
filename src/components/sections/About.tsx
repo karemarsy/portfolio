@@ -15,7 +15,7 @@ export function About() {
         />
         <div className="col-span-full mt-[clamp(56px,7vw,100px)] grid grid-cols-1 gap-7 border-t border-line-dark pt-8 wide:col-span-9 wide:col-start-4 wide:grid-cols-3 wide:gap-9">
           {aboutNotes.map((note) => (
-            <div key={note.title}>
+            <div key={note.title} className="about-note">
               <h3 className="mb-2.5 font-body text-base leading-[1.3] font-semibold tracking-normal text-accent">
                 {note.title}
               </h3>

@@ -31,7 +31,7 @@ export function Hero() {
             powering them. Ten years in, based in Kigali.
           </p>
           <div className="hero-actions">
-            <a className="btn" href="#contact">
+            <a className="btn" href="#contact" data-magnetic>
               <RollLabel label="Start a conversation" arrow />
             </a>
             <a className="btn btn-ghost" href="#work">
@@ -40,9 +40,6 @@ export function Hero() {
           </div>
         </div>
       </div>
-      <p className="hero-hint" aria-hidden="true">
-        Move your cursor through the portrait
-      </p>
     </section>
   );
 }
